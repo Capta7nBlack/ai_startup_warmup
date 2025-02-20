@@ -22,7 +22,7 @@ class Database:
         print("The db connection is closed")
 
 
-    def create_db():
+    def create_db(self):
 
         conn, curr = self.open()
         curr.execute(
@@ -40,7 +40,7 @@ class Database:
                  'id INTEGER PRIMARY KEY,'
                  'user_id INTEGER,'
                  'instrument_name TEXT,'
-                 'available INTEGER DEFAULT 0,'
+                 'available INTEGER DEFAULT 0'
                  ')'
                  )
 
@@ -60,7 +60,9 @@ class DatabaseOperations(Database):
             # Check if the instrument is available
             curr.execute("SELECT available FROM instruments WHERE id = ?", (instrument_id,))
             result = curr.fetchone()
-            if not result or result[0] == 0:
+            if not result:
+                raise ValueError("Instrument Does not Exist")
+            if result[0] == 0:
                 self.close(conn, curr)
                 raise ValueError("Instrument is not available for rent")
 
