@@ -40,7 +40,7 @@ class Database:
                  'id INTEGER PRIMARY KEY,'
                  'user_id INTEGER,'
                  'instrument_name TEXT,'
-                 'available INTEGER DEFAULT 0'
+                 'available INTEGER DEFAULT 1'
                  ')'
                  )
 
@@ -157,9 +157,9 @@ class DatabaseOperations(Database):
         instruments_list = []
         for instrument in instruments:
 
-            instruments_list = [
+            instruments_list.append( 
                     {"id":instrument[0], "instrument_name": instrument[1], "available": bool(instrument[2])}
-                                ]
+                                    )
             
         self.close(conn,curr)
         return instruments_list
