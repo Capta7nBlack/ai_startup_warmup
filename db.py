@@ -38,7 +38,6 @@ class Database:
         curr.execute(
                 'CREATE TABLE IF NOT EXISTS instruments('
                  'id INTEGER PRIMARY KEY,'
-                 'user_id INTEGER,'
                  'instrument_name TEXT,'
                  'available INTEGER DEFAULT 1'
                  ')'
@@ -75,7 +74,7 @@ class DatabaseOperations(Database):
                 "INSERT INTO logging (user_id, instrument_id, instrument_name, rent_date) VALUES (?, ?, ?, ?)",
                 (user_id, instrument_id, instrument_name, rent_date)
             )
-
+            print("Success in rent mf")
             self.close(conn, curr)
             return {"message": f"Instrument {instrument_name} rented successfully"}
 
@@ -83,18 +82,20 @@ class DatabaseOperations(Database):
 
 
     def returned(self, user_id, instrument_id):
+            print("starting returned func")
             conn, curr = self.open()
 
             # Fetch the latest rental entry for the instrument and user
             curr.execute(
-                "SELECT id FROM logging WHERE user_id = ? AND instrument_id = ? AND return_date IS NULL ORDER BY rent_date DESC LIMIT 1",
+                "SELECT id FROM logging WHERE user_id = ? AND instrument_id = ?",# AND return_date IS NULL",
                 (user_id, instrument_id)
             )
+            print("Selected ids' from logging")
             rental_entry = curr.fetchone()
             if not rental_entry:
                 self.close(conn, curr)
                 raise ValueError("No active rental found for this user and instrument")
-
+            print("rental_entry exist")
             # Mark instrument as available
             curr.execute("UPDATE instruments SET available = 1 WHERE id = ?", (instrument_id,))
 
@@ -123,7 +124,14 @@ class DatabaseOperations(Database):
 
 
 
-
+    def get_all(self):
+        conn, curr = self.open()
+        curr.execute("SELECT * FROM instruments")
+        print(curr.fetchall())
+        print("data above from instruments table")
+        curr.execute("SELECT * FROM logging")
+        print(curr.fetchall())
+        print("data above from logging table")
 
 
 
@@ -177,14 +185,4 @@ class DatabaseOperations(Database):
 
 
 
-    def log_instrument(self,instrument_id):
-    
-        pass
-
-    def log_user(self, user_id):
-        pass
-
-    def log_user_instrument(self, user_id, instrument_id):
-
-        pass
 

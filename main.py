@@ -33,7 +33,7 @@ def rent_instrument(request: RentInstrumentRequest, response: Response, user_id:
 
 
     try:
-        result = db_ops.rented(request.user_id, request.instrument_id, request.instrument_name)
+        result = db_ops.rented(str(user_id), request.instrument_id, request.instrument_name)
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -48,7 +48,7 @@ def return_instrument(request: ReturnInstrumentRequest, response: Response, user
 
 
     try:
-        result = db_ops.returned(request.user_id, request.instrument_id)
+        result = db_ops.returned(str(user_id), request.instrument_id)
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -75,9 +75,9 @@ def get_instrument_status(instrument_id: int):
 
 
 @app.get("/instruments/available", response_model=list[AvailableInstrumentResponse])
-def get_available_instruments():
+def get_instruments_available():
     try:
-        available_instruments = db_ops.get_available_instruments()
+        available_instruments = db_ops.get_instruments_available()
         return available_instruments
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

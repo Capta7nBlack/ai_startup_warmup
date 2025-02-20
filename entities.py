@@ -5,13 +5,13 @@ from typing import Optional
 
 # Pydantic models for request bodies
 class RentInstrumentRequest(BaseModel):
-    user_id: int
+    user_id: str
     instrument_id: int
     instrument_name: str
 
 
 class ReturnInstrumentRequest(BaseModel):
-    user_id: int
+    user_id: str
     instrument_id: int
 
 
